@@ -1,0 +1,53 @@
+//
+//  IntTriangle.swift
+//  
+//
+//  Created by Nail Sharipov on 15.03.2023.
+//
+
+struct IntTriangle {
+    
+    enum Orientation {
+        case clockWise
+        case counterClockWise
+        case line
+    }
+    
+    @inlinable
+    static func getOrientation(a: IntPoint, b: IntPoint, c: IntPoint) -> Orientation {
+        let m0 = (c.y &- a.y) &* (b.x &- a.x)
+        let m1 = (b.y &- a.y) &* (c.x &- a.x)
+        
+        if m0 < m1 {
+            return .clockWise
+        } else if m0 > m1 {
+            return .counterClockWise
+        } else {
+            return .line
+        }
+    }
+    
+    @inlinable
+    static func isNotLine(a: IntPoint, b: IntPoint, c: IntPoint) -> Bool {
+        let m0 = (c.y &- a.y) &* (b.x &- a.x)
+        let m1 = (b.y &- a.y) &* (c.x &- a.x)
+        return m0 != m1
+    }
+    
+    @inlinable
+    static func isCCW(a: IntPoint, b: IntPoint, c: IntPoint) -> Bool {
+        let m0 = (c.y &- a.y) &* (b.x &- a.x)
+        let m1 = (b.y &- a.y) &* (c.x &- a.x)
+        
+        return m0 < m1
+    }
+    
+    @inlinable
+    static func isCCW_or_Line(a: IntPoint, b: IntPoint, c: IntPoint) -> Bool {
+        let m0 = (c.y &- a.y) &* (b.x &- a.x)
+        let m1 = (b.y &- a.y) &* (c.x &- a.x)
+        
+        return m0 <= m1
+    }
+
+}
