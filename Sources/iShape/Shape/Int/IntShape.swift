@@ -37,4 +37,9 @@ public struct IntShape {
         self.holes = holes
     }
     
+    @inlinable
+    public func float(_ space: Space) -> Shape {
+        Shape(contour: contour.float(space), holes: space.float(contours: holes))
+    }
+    
 }

@@ -29,7 +29,7 @@ extension IntShape {
         let factor: Int64
     }
     
-    func createNavigator(maxEdge: Int64, extraPoints: [IntPoint]?) -> ShapeNavigator {
+    func createNavigator(extraPoints: [IntPoint]?) -> ShapeNavigator {
         let pointsCount = contour.count + holes.reduce(0, { $0 + $1.count })
         
         let n: Int

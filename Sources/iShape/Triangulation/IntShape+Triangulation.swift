@@ -13,7 +13,7 @@ public extension IntShape {
     func triangulate(extraPoints: [IntPoint]? = nil) -> [Int] {
         guard contour.count > 2 else { return [] }
         
-        let layout = self.split(maxEdge: 0, extraPoints: extraPoints)
+        let layout = self.split(extraPoints: extraPoints)
         
         let extraCount: Int = extraPoints?.count ?? 0
         let pointsCount = contour.count + holes.reduce(0, { $0 + $1.count })

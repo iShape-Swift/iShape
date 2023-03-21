@@ -8,10 +8,20 @@
 extension Fixer {
     
     @usableFromInline
-    struct Edge {
+    struct Edge: Hashable {
         
         let start: IntPoint
         let end: IntPoint
 
+        @inlinable
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(start.bitPack)
+            hasher.combine(end.bitPack)
+        }
+
+        @inlinable
+        public static func == (lhs: Edge, rhs: Edge) -> Bool {
+            return lhs.start == rhs.start && lhs.end == rhs.end
+        }
     }
 }

@@ -13,10 +13,9 @@ struct SwipeLineEvent {
         case remove = 1
     }
 
-    @usableFromInline
-    let sortValue: Int64
+    let order: Int64
     let action: Action
-    let edgeId: Int
+    let edge: Fixer.Edge
     
     #if DEBUG
     let point: IntPoint

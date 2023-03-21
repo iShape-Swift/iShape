@@ -38,195 +38,103 @@ struct Fixer {
     }
     
     private func devide(contour: IntContour) -> [Edge] {
-        var edges = contour.edges()
+        var eventList = SwipeLineEventList(contour: contour)
         
-        var eventList = SwipeLineEventList(edges: edges)
-        
-        var scanList = [Int]()
-        scanList.reserveCapacity(16)
+        var scanSet = Set<Edge>()
+        scanSet.reserveCapacity(16)
 
+        var edges = [Edge]()
+        edges.reserveCapacity((contour.count * 4) / 3)
+        
         while eventList.hasNext {
             let event = eventList.next()
 
             switch event.action {
             case .add:
                 
-                var thisId = event.edgeId
-                var thisEdge = edges[thisId]
-                var newScanId = thisId
+                var this = event.edge
+
+                let scanList = Array(scanSet)
                 
-                // try to cross with the scan list
-                var j = 0
-                while j < scanList.count {
-                    let otherId = scanList[j]
-                    let otherEdge = edges[otherId]
-                    let crossResult = thisEdge.cross(other: otherEdge)
+                for other in scanList {
+                    let crossResult = this.cross(other: other)
                     
                     switch crossResult.type {
                     case .not_cross, .end_a0_b0, .end_a0_b1, .end_a1_b0, .end_a1_b1, .same_line:
-                        j += 1
+                        continue
                     case .pure:
                         let cross = crossResult.point
 
-                        // devide edges
+                        assert(scanSet.contains(other))
+                        scanSet.remove(other)
+                        eventList.deleteRemoveEvent(edge: other)
                         
-                        // for this edge
-                        // create new left part (new edge id), put 'remove' event
-                        // update right part (keep old edge id), put 'add' event
-                        
-                        let thisNewId = edges.count
-                        let thisResult = self.devide(edge: thisEdge, id: thisId, cross: cross, nextId: thisNewId)
-                        
-                        edges.append(thisResult.leftPart)
-                        thisEdge = thisResult.leftPart
-                        edges[thisId] = thisResult.rightPart    // update old edge (right part)
-                        thisId = thisNewId                      // we are now left part with new id
+                        // devide this and other
 
-                        newScanId = thisNewId
+                        let thisParts = self.devide(edge: this, cross: cross)
+                        let otherParts = self.devide(edge: other, cross: cross)
                         
-                        // for other(scan) edge
-                        // create new left part (new edge id), put 'remove' event
-                        // update right part (keep old edge id), put 'add' event
+                        assert(!scanSet.contains(otherParts.left))
+                        scanSet.insert(otherParts.left)
+                        eventList.newRemoveEvent(edge: otherParts.left)
                         
-                        let otherNewId = edges.count
-                        let otherResult = self.devide(edge: otherEdge, id: otherId, cross: cross, nextId: otherNewId)
+                        eventList.newAddEvent(edge: thisParts.right)
+                        eventList.newAddEvent(edge: otherParts.right)
                         
-                        edges.append(otherResult.leftPart)
-                        edges[otherId] = otherResult.rightPart
-
-                        scanList[j] = otherNewId
+                        this = thisParts.left
                         
-                        // insert events
-                        
-                        eventList.add(event: thisResult.removeEvent)
-                        eventList.add(event: otherResult.removeEvent)
-                        eventList.add(event: thisResult.addEvent)
-                        eventList.add(event: otherResult.addEvent)
-
-                        j += 1
                     case .end_b0, .end_b1:
                         let cross = crossResult.point
                         
-                        // devide this edge
-                        
-                        // create new left part (new edge id), put 'remove' event
-                        // update right part (keep old edge id), put 'add' event
-                        
-                        let thisNewId = edges.count
-                        let thisResult = self.devide(edge: thisEdge, id: thisId, cross: cross, nextId: thisNewId)
-                        
-                        thisEdge = thisResult.leftPart
-                        edges.append(thisResult.leftPart)
-                        edges[thisId] = thisResult.rightPart    // update old edge (right part)
-                        thisId = thisNewId                      // we are now left part with new id
-                        
-                        newScanId = thisNewId
-                        
-                        // insert events
+                        // devide this
 
-                        eventList.add(event: thisResult.removeEvent)
-                        eventList.add(event: thisResult.addEvent)
+                        let thisParts = self.devide(edge: this, cross: cross)
 
-                        j += 1
+                        eventList.newAddEvent(edge: thisParts.right)
+                        
+                        this = thisParts.left
+                        
                     case .end_a0, .end_a1:
                         let cross = crossResult.point
                         
-                        // devide other(scan) edge
+                        assert(scanSet.contains(other))
+                        scanSet.remove(other)
+                        eventList.deleteRemoveEvent(edge: other)
+                        
+                        // devide other
 
-                        // create new left part (new edge id), put 'remove' event
-                        // update right part (keep old edge id), put 'add' event
-
-                        let otherNewId = edges.count
-                        let otherResult = self.devide(edge: otherEdge, id: otherId, cross: cross, nextId: otherNewId)
+                        let otherParts = self.devide(edge: other, cross: cross)
                         
-                        edges.append(otherResult.leftPart)
-                        edges[otherId] = otherResult.rightPart
+                        assert(!scanSet.contains(otherParts.left))
+                        scanSet.insert(otherParts.left)
+                        eventList.newRemoveEvent(edge: otherParts.left)
                         
-                        scanList[j] = otherNewId
-                        
-                        // insert events
-
-                        eventList.add(event: otherResult.removeEvent)
-                        eventList.add(event: otherResult.addEvent)
-                        
-                        j += 1
+                        eventList.newAddEvent(edge: otherParts.right)
                     }
                 } // while scanList
                 
-                scanList.append(newScanId)
+                scanSet.insert(this)
+                eventList.newRemoveEvent(edge: this)
 
             case .remove:
-                // scan list is sorted
-                print(event)
-                if let index = scanList.firstIndex(of: event.edgeId) { // it must be one of the first elements
-                    scanList.remove(at: index)
-                } else {
-                    assertionFailure("impossible")
-                }
+                assert(scanSet.contains(event.edge))
+                edges.append(event.edge)
+                scanSet.remove(event.edge)
             } // switch
-            
-            #if DEBUG
-            let set = Set(scanList)
-            assert(set.count == scanList.count)
-            #endif
-
         } // while
         
         return edges
     }
     
     private struct DivideResult {
-        let leftPart: Fixer.Edge
-        let rightPart: Fixer.Edge
-        let removeEvent: SwipeLineEvent
-        let addEvent: SwipeLineEvent
+        let left: Fixer.Edge
+        let right: Fixer.Edge
     }
     
-    private func devide(edge: Fixer.Edge, id: Int, cross: IntPoint, nextId: Int) -> DivideResult {
+    private func devide(edge: Fixer.Edge, cross: IntPoint) -> DivideResult {
         let leftPart = Fixer.Edge(start: edge.start, end: cross)
         let rightPart = Fixer.Edge(start: cross, end: edge.end)
-
-#if DEBUG
-        // left
-        let evRemove = SwipeLineEvent(sortValue: leftPart.end.bitPack, action: .remove, edgeId: nextId, point: leftPart.end)
-        // right
-        let evAdd = SwipeLineEvent(sortValue: rightPart.start.bitPack, action: .add, edgeId: id, point: cross)
-#else
-        let evRemove = SwipeLineEvent(sortValue: bitPack, action: .remove, edgeId: nextId)
-        let evAdd = SwipeLineEvent(sortValue: bitPack, action: .add, edgeId: id)
-#endif
         
-        return DivideResult(
-            leftPart: leftPart,
-            rightPart: rightPart,
-            removeEvent: evRemove,
-            addEvent: evAdd
-        )
-    }
-}
-
-private extension Array where Element == IntPoint {
-    
-    func edges() -> [Fixer.Edge] {
-        var a = self[count - 1]
-        var result = [Fixer.Edge]()
-        result.reserveCapacity(count + 4)
-
-        var start = a.bitPack
-
-        for b in self {
-            let end = b.bitPack
-            
-            if start > end {
-                result.append(Fixer.Edge(start: b, end: a))
-            } else if start < end {
-                result.append(Fixer.Edge(start: a, end: b))
-            } // skip degenerate dots
-
-            start = end
-            a = b
-        }
-        
-        return result
+        return DivideResult(left: leftPart, right: rightPart)
     }
 }

@@ -31,6 +31,21 @@ public extension Point {
         self.x * vector.y - self.y * vector.x
     }
 
+    @inlinable
+    func length() -> Float {
+        simd_length(self)
+    }
+    
+    @inlinable
+    func sqrLength() -> Float {
+        x * x + y * y
+    }
+    
+    @inlinable
+    func sqrDistance(_ point: Point) -> Float {
+        simd_distance(self, point)
+    }
+    
 }
 
 public extension CGPoint {

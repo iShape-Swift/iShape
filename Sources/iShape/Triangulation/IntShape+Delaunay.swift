@@ -89,8 +89,8 @@ public extension IntShape {
         }
     }
 
-    func delaunay(maxEdge: Int64 = 0, extraPoints: [IntPoint]? = nil) -> Delaunay {
-        let layout = self.split(maxEdge: maxEdge, extraPoints: extraPoints)
+    func delaunay(extraPoints: [IntPoint] = []) -> Delaunay {
+        let layout = self.split(extraPoints: extraPoints)
             
         let totalCount = layout.pathCount + 2 * (layout.extraCount + holes.count - 1)
         
@@ -108,7 +108,7 @@ public extension IntShape {
         sliceBuffer.addConections(triangles: &triangles)
         
         var delaunay: Delaunay
-        if extraPoints == nil && maxEdge == 0 {
+        if extraPoints.isEmpty {
             let points = contour + holes.flatMap({ $0 })
             delaunay = Delaunay(points: points, triangles: triangles)
         } else {

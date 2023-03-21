@@ -72,6 +72,11 @@ public struct IntPoint {
     }
     
     @inlinable
+    public func sqrLength() -> Int64 {
+        x * x + y * y
+    }
+    
+    @inlinable
     public static func isSameLine(a: IntPoint, b: IntPoint, c: IntPoint) -> Bool {
         let dxBA = b.x - a.x
         let dxCA = c.x - a.x

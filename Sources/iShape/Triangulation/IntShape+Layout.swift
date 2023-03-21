@@ -79,9 +79,9 @@ extension IntShape {
         }
     }
     
-    func split(maxEdge: Int64, extraPoints: [IntPoint]?) -> MonotoneLayout {
+    func split(extraPoints: [IntPoint]?) -> MonotoneLayout {
         
-        let navigator = self.createNavigator(maxEdge: maxEdge, extraPoints: extraPoints)
+        let navigator = self.createNavigator(extraPoints: extraPoints)
         
         var links = navigator.links
         let natures = navigator.natures
