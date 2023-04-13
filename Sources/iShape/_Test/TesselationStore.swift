@@ -22,5 +22,17 @@ public struct TesselationStore {
                 Point(x:  20, y: 20),
                 Point(x:  20, y:-20)
         ]))),
+        TesselationTest(
+            id: 1,
+            shape: IntShape(contour: IntContour([
+                Point(x: -20, y:-20),
+                Point(x: -20, y:  0),
+                Point(x: -20, y: 20),
+                Point(x:   0, y: 20),
+                Point(x:  20, y: 20),
+                Point(x:  20, y:  0),
+                Point(x:  20, y:-20),
+                Point(x:   0, y:-20)
+        ])))
     ]
 }

@@ -15,12 +15,11 @@ public struct Vertex {
     
     public enum Nature {
         case origin
-        case extraPath
         case extraInner
         case extraTessellated
         
         public var isPath: Bool {
-            self == .origin || self == .extraPath
+            self == .origin
         }
     }
     
