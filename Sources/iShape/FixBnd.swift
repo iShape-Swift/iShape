@@ -1,5 +1,5 @@
 //
-//  Boundary.swift
+//  FixBnd.swift
 //  
 //
 //  Created by Nail Sharipov on 10.07.2023.
@@ -7,9 +7,9 @@
 
 import iFixFloat
 
-public struct Boundary: Equatable {
+public struct FixBnd: Equatable {
 
-    public static let zero = Boundary(min: .zero, max: .zero)
+    public static let zero = FixBnd(min: .zero, max: .zero)
     
     public let min: FixVec
     public let max: FixVec
@@ -77,17 +77,17 @@ public struct Boundary: Equatable {
     }
 
     @inlinable
-    public func union(_ b: Boundary) -> Boundary {
+    public func union(_ b: FixBnd) -> FixBnd {
         let minX = Swift.min(min.x, b.min.x)
         let minY = Swift.min(min.y, b.min.y)
         let maxX = Swift.max(max.x, b.max.x)
         let maxY = Swift.max(max.y, b.max.y)
         
-        return Boundary(min: FixVec(minX, minY), max: FixVec(maxX, maxY))
+        return FixBnd(min: FixVec(minX, minY), max: FixVec(maxX, maxY))
     }
     
     @inlinable
-    public func isCollide(_ b: Boundary) -> Bool {
+    public func isCollide(_ b: FixBnd) -> Bool {
         // Check if the bounding boxes intersect in any dimension
         if max.x < b.min.x || min.x > b.max.x {
             return false
@@ -114,7 +114,7 @@ public struct Boundary: Equatable {
     }
     
     @inlinable
-    public func isOverlap(_ b: Boundary) -> Bool {
+    public func isOverlap(_ b: FixBnd) -> Bool {
         min.x - 1 < b.min.x && min.y - 1 < b.min.y && max.x + 1 > b.max.x && max.y + 1 > b.max.y
     }
 

@@ -54,6 +54,7 @@ public extension FixPath {
         return isContain
     }
     
+    @inlinable
     /// Checks if the current `FixPath` is equal to another `FixPath`.
     /// It only works correctly with paths without duplicates.
     /// - Parameter other: The `FixPath` to compare to the current path.
