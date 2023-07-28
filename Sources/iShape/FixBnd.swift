@@ -97,6 +97,13 @@ public struct FixBnd: Equatable {
         }
         return true
     }
+
+    @inlinable
+    public func isInside(_ b: FixBnd) -> Bool {
+        let isX = max.x >= b.max.x && b.min.x >= b.min.x
+        let isY = max.y >= b.max.y && b.min.y >= b.min.y
+        return isX && isY
+    }
     
     @inlinable
     public func isContain(point p: FixVec) -> Bool {

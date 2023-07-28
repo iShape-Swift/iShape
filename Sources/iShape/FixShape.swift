@@ -7,10 +7,12 @@
 
 import iFixFloat
 
+// TODO implement ZipShape
+
 public struct FixShape {
     
-    public let contour: FixPath
-    public let holes: [FixPath]
+    public var contour: FixPath
+    public var holes: [FixPath]
     
     @inlinable
     public init(contour: FixPath, holes: [FixPath]) {

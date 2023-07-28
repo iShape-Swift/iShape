@@ -7,6 +7,8 @@
 
 import iFixFloat
 
+// TODO Remove to iConvex
+
 public struct MileStone: Equatable, Hashable {
     
     public static let zero = MileStone(index: 0)
