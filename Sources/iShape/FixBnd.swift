@@ -92,16 +92,18 @@ public struct FixBnd: Equatable {
         if max.x < b.min.x || min.x > b.max.x {
             return false
         }
+        
         if max.y < b.min.y || min.y > b.max.y {
             return false
         }
+        
         return true
     }
 
     @inlinable
     public func isInside(_ b: FixBnd) -> Bool {
-        let isX = max.x >= b.max.x && b.min.x >= b.min.x
-        let isY = max.y >= b.max.y && b.min.y >= b.min.y
+        let isX = max.x >= b.max.x && min.x <= b.min.x
+        let isY = max.y >= b.max.y && min.y <= b.min.y
         return isX && isY
     }
     
