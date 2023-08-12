@@ -9,7 +9,7 @@ import iFixFloat
 
 public struct EdgeCross {
 
-    static let notCross = EdgeCross(type: .not_cross, point: .zero)
+    public static let notCross = EdgeCross(type: .not_cross, point: .zero)
     
     public let type: EdgeCrossType
     public let point: FixVec
@@ -48,15 +48,14 @@ public struct FixEdge {
     }
 
     public func cross(_ other: FixEdge) -> EdgeCross {
-
         let a0 = e0
         let a1 = e1
 
         let b0 = other.e0
         let b1 = other.e1
 
-        let a0Area = Triangle.unsafeArea(p0: b0, p1: a0, p2: b1)
-        let a1Area = Triangle.unsafeArea(p0: b0, p1: a1, p2: b1)
+        let a0Area = Triangle.unsafeAreaTwo(p0: b0, p1: a0, p2: b1)
+        let a1Area = Triangle.unsafeAreaTwo(p0: b0, p1: a1, p2: b1)
         
         let comA0 = a0 == b0 || a0 == b1
         let comA1 = a1 == b0 || a1 == b1
@@ -88,7 +87,7 @@ public struct FixEdge {
             }
         }
 
-        let b0Area = Triangle.unsafeArea(p0: a0, p1: b0, p2: a1)
+        let b0Area = Triangle.unsafeAreaTwo(p0: a0, p1: b0, p2: a1)
 
         guard b0Area != 0 else {
             if self.isBoxContain(b0) {
@@ -98,7 +97,7 @@ public struct FixEdge {
             }
         }
 
-        let b1Area = Triangle.unsafeArea(p0: a0, p1: b1, p2: a1)
+        let b1Area = Triangle.unsafeAreaTwo(p0: a0, p1: b1, p2: a1)
 
         guard b1Area != 0 else {
             if self.isBoxContain(b1) {
@@ -117,7 +116,10 @@ public struct FixEdge {
         }
 
         let p = Self.crossPoint(a0: a0, a1: a1, b0: b0, b1: b1)
-
+        
+        assert(self.isBoxContain(p))
+        assert(other.isBoxContain(p))
+        
         // still can be common ends cause rounding
         let endA = a0 == p || a1 == p
         let endB = b0 == p || b1 == p
@@ -133,27 +135,84 @@ public struct FixEdge {
         } else {
             assertionFailure("impossible")
         }
-
+        
         return EdgeCross(type: type, point: p)
     }
-
+    
     private static func crossPoint(a0: FixVec, a1: FixVec, b0: FixVec, b1: FixVec) -> FixVec {
+        /// edges are not parralel
+        /// FixVec(Int64, Int64) where abs(x) and abs(y) < 2^30
+        /// So the result must be also be in range of 2^30
         
-        let vA = a0 - a1
-        let vB = b0 - b1
+        /// Classic aproach:
+        
+        /// let dxA = a0.x - a1.x
+        /// let dyB = b0.y - b1.y
+        /// let dyA = a0.y - a1.y
+        /// let dxB = b0.x - b1.x
+        ///
+        /// let xyA = a0.x * a1.y - a0.y * a1.x
+        /// let xyB = b0.x * b1.y - b0.y * b1.x
+        ///
+        /// overflow is possible!
+        /// let kx = xyA * dxB - dxA * xyB
+        ///
+        /// overflow is possible!
+        /// let ky = xyA * dyB - dyA * xyB
+        ///
+        /// let divider = dxA * dyB - dyA * dxB
+        ///
+        /// let x = kx / divider
+        /// let y = ky / divider
+        ///
+        /// return FixVec(x, y)
 
-        let crossA = a0.unsafeCrossProduct(a1)
-        let crossB = b0.unsafeCrossProduct(b1)
-        
-        let x = crossA * vB.x - vA.x * crossB
-        let y = crossA * vB.y - vA.y * crossB
+        /// offset approach
+        /// move all picture by -a0. Point a0 will be equal (0, 0)
 
-        let divider = vA.unsafeCrossProduct(vB)
+        // move a0.x to 0
+        // move all by a0.x
+        let a1x = a1.x - a0.x
+        let b0x = b0.x - a0.x
+        let b1x = b1.x - a0.x
+
+        // move a0.y to 0
+        // move all by a0.y
+        let a1y = a1.y - a0.y
+        let b0y = b0.y - a0.y
+        let b1y = b1.y - a0.y
         
-        let cx = x / divider
-        let cy = y / divider
+        let dyB = b0y - b1y
+        let dxB = b0x - b1x
         
-        return FixVec(cx, cy)
+     // let xyA = 0
+        let xyB = b0x * b1y - b0y * b1x
+ 
+        let x0: Int64
+        let y0: Int64
+        
+        // a1y and a1x cannot be zero simultaneously, cause we will get edge a0<>a1 zero length and it is impossible
+        
+        if a1x == 0 {
+            // dxB is not zero cause it will be parallel case and it's impossible
+            x0 = 0
+            y0 = xyB / dxB
+        } else if a1y == 0 {
+            // dyB is not zero cause it will be parallel case and it's impossible
+            y0 = 0
+            x0 = -xyB / dyB
+        } else {
+            let divX = (a1y * dxB) / a1x - dyB
+            let divY = dxB - (a1x * dyB) / a1y
+
+            x0 = xyB / divX
+            y0 = xyB / divY
+        }
+        
+        let x = x0 + a0.x
+        let y = y0 + a0.y
+        
+        return FixVec(x, y)
     }
 
     private func isBoxContain(_ p: FixVec) -> Bool {
@@ -229,9 +288,8 @@ public struct FixEdge {
         
         return EdgeCross(type: .penetrate, point: ap, second: bp)
     }
-
+    
 }
-
 
 private extension FixBnd {
 

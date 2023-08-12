@@ -25,6 +25,11 @@ public struct Triangle {
     }
     
     @inlinable
+    public static func fixAreaTwo(p0: FixVec, p1: FixVec, p2: FixVec) -> FixFloat {
+        (p1 - p0).crossProduct(p1 - p2)
+    }
+    
+    @inlinable
     public static func isClockwise(p0: FixVec, p1: FixVec, p2: FixVec) -> Bool {
         unsafeAreaTwo(p0: p0, p1: p1, p2: p2) > 0
     }
