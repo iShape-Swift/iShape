@@ -202,11 +202,29 @@ public struct FixEdge {
             y0 = 0
             x0 = -xyB / dyB
         } else {
-            let divX = (a1y * dxB) / a1x - dyB
-            let divY = dxB - (a1x * dyB) / a1y
-
-            x0 = xyB / divX
-            y0 = xyB / divY
+            // multiply denominator and discriminant by same value to increase precision
+            
+            let xym = xyB.leadingZeroBitCountIgnoreSign
+            
+            // x
+            
+            let xd = a1y * dxB
+            let xdm = xd.leadingZeroBitCountIgnoreSign
+            
+            let xm = min(30, min(xym, xdm))
+            let divX = (xd << xm) / a1x - (dyB << xm)
+            
+            x0 = (xyB << xm) / divX
+            
+            // y
+            
+            let yd = a1x * dyB
+            let ydm = yd.leadingZeroBitCountIgnoreSign
+            
+            let ym = min(30, min(xym, ydm))
+            let divY = (dxB << ym) - (yd << ym) / a1y
+            
+            y0 = (xyB << ym) / divY
         }
         
         let x = x0 + a0.x
@@ -297,4 +315,11 @@ private extension FixBnd {
         self.init(p0: edge.e0, p1: edge.e1)
     }
 
+}
+
+private extension Int64 {
+    
+    var leadingZeroBitCountIgnoreSign: Int {
+        abs(self).leadingZeroBitCount - 1
+    }
 }
