@@ -10,7 +10,7 @@ import iFixFloat
 
 public extension CGPoint {
     
-    @inlinable
+    @inline(__always)
     var fix: FixVec {
         FixVec(x: x.fix, y: y.fix)
     }
@@ -19,7 +19,7 @@ public extension CGPoint {
 
 public extension FixVec {
 
-    @inlinable
+    @inline(__always)
     var cgPoint: CGPoint {
         CGPoint(x: x.cgFloat, y: y.cgFloat)
     }

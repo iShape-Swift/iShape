@@ -14,13 +14,12 @@ public struct FixShape {
     public var contour: FixPath
     public var holes: [FixPath]
     
-    @inlinable
+    @inline(__always)
     public init(contour: FixPath, holes: [FixPath]) {
         self.contour = contour
         self.holes = holes
     }
 
-    @inlinable
     public init(paths: [FixPath]) {
         let n = paths.count
         contour = paths[0]

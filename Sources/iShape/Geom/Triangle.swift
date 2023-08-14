@@ -9,42 +9,42 @@ import iFixFloat
 
 public struct Triangle {
 
-    @inlinable
+    @inline(__always)
     public static func unsafeAreaTwo(p0: FixVec, p1: FixVec, p2: FixVec) -> FixFloat {
         (p1 - p0).unsafeCrossProduct(p1 - p2)
     }
     
-    @inlinable
+    @inline(__always)
     public static func unsafeArea(p0: FixVec, p1: FixVec, p2: FixVec) -> FixFloat {
         unsafeAreaTwo(p0: p0, p1: p1, p2: p2) / 2
     }
     
-    @inlinable
+    @inline(__always)
     public static func fixArea(p0: FixVec, p1: FixVec, p2: FixVec) -> FixFloat {
         (p1 - p0).crossProduct(p1 - p2) / 2
     }
     
-    @inlinable
+    @inline(__always)
     public static func fixAreaTwo(p0: FixVec, p1: FixVec, p2: FixVec) -> FixFloat {
         (p1 - p0).crossProduct(p1 - p2)
     }
     
-    @inlinable
+    @inline(__always)
     public static func isClockwise(p0: FixVec, p1: FixVec, p2: FixVec) -> Bool {
         unsafeAreaTwo(p0: p0, p1: p1, p2: p2) > 0
     }
 
-    @inlinable
+    @inline(__always)
     public static func isCW_or_Line(p0: FixVec, p1: FixVec, p2: FixVec) -> Bool {
         unsafeAreaTwo(p0: p0, p1: p1, p2: p2) >= 0
     }
     
-    @inlinable
+    @inline(__always)
     public static func isNotLine(p0: FixVec, p1: FixVec, p2: FixVec) -> Bool {
         unsafeAreaTwo(p0: p0, p1: p1, p2: p2) != 0
     }
     
-    @inlinable
+    @inline(__always)
     public static func clockDirection(p0: FixVec, p1: FixVec, p2: FixVec) -> Int {
         let area = unsafeAreaTwo(p0: p0, p1: p1, p2: p2)
         if area < 0 {
@@ -58,7 +58,7 @@ public struct Triangle {
         return 0
     }
     
-    @inlinable
+    @inline(__always)
     public static func isContain(p: FixVec, p0: FixVec, p1: FixVec, p2: FixVec) -> Bool {
         let q0 = (p - p1).unsafeCrossProduct(p0 - p1)
         let q1 = (p - p2).unsafeCrossProduct(p1 - p2)
@@ -70,7 +70,7 @@ public struct Triangle {
         return !(has_neg && has_pos)
     }
     
-    @inlinable
+    @inline(__always)
     public static func isNotContain(p: FixVec, p0: FixVec, p1: FixVec, p2: FixVec) -> Bool {
         let q0 = (p - p1).unsafeCrossProduct(p0 - p1)
         let q1 = (p - p2).unsafeCrossProduct(p1 - p2)

@@ -10,7 +10,7 @@ import iFixFloat
 
 public extension CGFloat {
     
-    @inlinable
+    @inline(__always)
     var fix: FixFloat {
         Int64(self * CGFloat(FixFloat.unit))
     }
@@ -19,7 +19,7 @@ public extension CGFloat {
 
 public extension FixFloat {
 
-    @inlinable
+    @inline(__always)
     var cgFloat: CGFloat {
         CGFloat(self) / CGFloat(FixFloat.unit)
     }
