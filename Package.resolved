@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/iShape-Swift/iFixFloat",
       "state" : {
-        "revision" : "222bad964f2cd995ba813b937d979b66da57a281",
-        "version" : "0.0.1"
+        "revision" : "5defd5f729de23f193e8dc8254a63631a0bef7a1",
+        "version" : "1.0.0"
       }
     }
   ],
