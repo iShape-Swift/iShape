@@ -31,16 +31,12 @@ public struct FixShape {
     /// - Parameters:
     ///   - contour: The contour defining the outer boundary of the shape.
     ///   - holes: The array of holes defining the inner boundaries of the shape.
-    ///   - validateDirection: Optional parameter to check that all paths are in a clockwise direction. Default is true.
     @inline(__always)
-    public init(contour: FixPath, holes: [FixPath], validateDirection: Bool = true) {
+    public init(contour: FixPath, holes: [FixPath]) {
         paths = [FixPath]()
         paths.reserveCapacity(holes.count + 1)
         paths.append(contour)
         paths.append(contentsOf: holes)
-        if validateDirection {
-            self.setDirection(clockwise: true)
-        }
     }
     
     /// Initializes a new shape with the specified paths.
