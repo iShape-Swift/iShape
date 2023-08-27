@@ -57,13 +57,13 @@ public struct FixEdge {
         let a0Area = Triangle.unsafeAreaTwo(p0: b0, p1: a0, p2: b1)
         let a1Area = Triangle.unsafeAreaTwo(p0: b0, p1: a1, p2: b1)
         
-        let comA0 = a0 == b0 || a0 == b1
-        let comA1 = a1 == b0 || a1 == b1
-        
         guard a0Area != 0 || a1Area != 0 else {
             // same line
             return Self.sameLineOverlay(self, other)
         }
+
+        let comA0 = a0 == b0 || a0 == b1
+        let comA1 = a1 == b0 || a1 == b1
         
         let hasSameEnd = comA0 || comA1
         
