@@ -16,7 +16,7 @@ Installing iShape is simple and easy using Swift Package Manager. Just follow th
 - Open your Xcode project.
 - Select your project and open tab Package Dependencies.
 - Click on the "+" button.
-- In search bar enter "https://github.com/iShape-Swift/iShape".
+- In search bar enter ```https://github.com/iShape-Swift/iShape```
 - Click the "Add" button.
 - Wait for the package to be imported.
 - In your Swift code, add the following using statement to access the library:
