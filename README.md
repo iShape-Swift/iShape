@@ -23,6 +23,7 @@ Installing iShape is simple and easy using Swift Package Manager. Just follow th
 
 ```swift
 import iFixFloat
+import iFixShape
 ```
 
 ## Usage
