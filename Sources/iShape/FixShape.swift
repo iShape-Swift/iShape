@@ -26,6 +26,15 @@ public struct FixShape {
 
     public var paths: [FixPath]
     
+    /// Initializes a new shape with the specified contour.
+    ///
+    /// - Parameters:
+    ///   - contour: The contour defining the outer boundary of the shape.
+    @inline(__always)
+    public init(contour: FixPath) {
+        paths = [contour]
+    }
+    
     /// Initializes a new shape with the specified contour and holes.
     ///
     /// - Parameters:
