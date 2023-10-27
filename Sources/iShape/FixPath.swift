@@ -50,10 +50,17 @@ public extension FixPath {
         for p2 in self {
             let e1 = p2 - p1
             let cross = e1.unsafeCrossProduct(e0).signum()
-            if sign == 0 {
-                sign = cross
-            } else if cross != 0 && sign != cross {
-                return false
+            if cross == 0 {
+                let dot = e1.unsafeDotProduct(e0);
+                if dot == -1 {
+                    return false
+                }
+            } else {
+                if sign == 0 {
+                    sign = cross
+                } else if sign != cross {
+                    return false
+                }
             }
             e0 = e1
             p1 = p2
