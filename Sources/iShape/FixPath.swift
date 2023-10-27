@@ -28,6 +28,40 @@ public extension FixPath {
         return area >> (FixFloat.fractionBits + 1)
     }
 
+    /// Determines if the `FixPath` is convex.
+    ///
+    /// A convex polygon is a simple polygon (not self-intersecting) in which
+    /// the line segment between any two points along the boundary never
+    /// goes outside the polygon. This method assumes that the points in `FixPath`
+    /// are ordered (either clockwise or counter-clockwise) and the path is not
+    /// self-intersecting.
+    ///
+    /// - Returns: A Boolean value indicating whether the path is convex.
+    ///   - Returns `true` if the path is convex.
+    ///   - Returns `false` otherwise.
+    var isConvex: Bool {
+        let n = self.count
+        guard n > 2 else { return true }
+        
+        let p0 = self[n - 2]
+        var p1 = self[n - 1]
+        var e0 = p1 - p0
+        var sign: Int64 = 0
+        for p2 in self {
+            let e1 = p2 - p1
+            let cross = e1.unsafeCrossProduct(e0).signum()
+            if sign == 0 {
+                sign = cross
+            } else if cross != 0 && sign != cross {
+                return false
+            }
+            e0 = e1
+            p1 = p2
+        }
+        
+        return true
+    }
+    
     
     /// Checks if a point is contained within the `FixPath`.
     /// - Parameter p: The `FixVec` point to check.
