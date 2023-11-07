@@ -7,10 +7,14 @@
 
 import iFixFloat
 
-// TODO implement ZipShape
-
 /// Represents a fixed geometric shape with contour and holes.
 public struct FixShape {
+    
+    public var paths: [FixPath]
+    
+    public var isConvexPolygon: Bool {
+        paths.count == 1 && contour.isConvex
+    }
     
     /// The contour defining the outer boundary of the shape.
     @inline(__always)
@@ -23,8 +27,6 @@ public struct FixShape {
     public var holes: ArraySlice<FixPath> {
         paths[1..<paths.count]
     }
-
-    public var paths: [FixPath]
     
     /// Initializes a new shape with the specified contour.
     ///
