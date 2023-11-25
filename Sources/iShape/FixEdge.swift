@@ -8,8 +8,6 @@
 import iFixFloat
 
 public struct EdgeCross {
-
-    public static let notCross = EdgeCross(type: .not_cross, point: .zero)
     
     public let type: EdgeCrossType
     public let point: FixVec
@@ -24,10 +22,8 @@ public struct EdgeCross {
 }
 
 public enum EdgeCrossType {
-    
-    case not_cross          // no intersections or parallel
+
     case pure               // simple intersection with no overlaps or common points
-    
     case overlay_a          // a is inside b
     case overlay_b          // b is inside a
     case penetrate          // a and b penetrate each other
@@ -47,7 +43,7 @@ public struct FixEdge {
         self.e1 = e1
     }
 
-    public func cross(_ other: FixEdge) -> EdgeCross {
+    public func cross(_ other: FixEdge) -> EdgeCross? {
         let a0 = e0
         let a1 = e1
 
@@ -68,14 +64,14 @@ public struct FixEdge {
         let hasSameEnd = comA0 || comA1
         
         guard !hasSameEnd else {
-            return .notCross
+            return nil
         }
 
         guard a0Area != 0 else {
             if other.isBoxContain(a0) {
                 return EdgeCross(type: .end_a, point: a0)
             } else {
-                return .notCross
+                return nil
             }
         }
 
@@ -83,7 +79,7 @@ public struct FixEdge {
             if other.isBoxContain(a1) {
                 return EdgeCross(type: .end_a, point: a1)
             } else {
-                return .notCross
+                return nil
             }
         }
 
@@ -93,7 +89,7 @@ public struct FixEdge {
             if self.isBoxContain(b0) {
                 return EdgeCross(type: .end_b, point: b0)
             } else {
-                return .notCross
+                return nil
             }
         }
 
@@ -103,7 +99,7 @@ public struct FixEdge {
             if self.isBoxContain(b1) {
                 return EdgeCross(type: .end_b, point: b1)
             } else {
-                return .notCross
+                return nil
             }
         }
 
@@ -112,7 +108,7 @@ public struct FixEdge {
         let areaBCondition = b0Area > 0 && b1Area < 0 || b0Area < 0 && b1Area > 0
 
         guard areaACondition && areaBCondition else {
-            return .notCross
+            return nil
         }
 
         let p = Self.crossPoint(a0: a0, a1: a1, b0: b0, b1: b1)
@@ -124,19 +120,15 @@ public struct FixEdge {
         let endA = a0 == p || a1 == p
         let endB = b0 == p || b1 == p
 
-        var type: EdgeCrossType = .not_cross
-
         if !endA && !endB {
-            type = .pure
+            return EdgeCross(type: .pure, point: p)
         } else if endA {
-            type = .end_a
+            return EdgeCross(type: .end_a, point: p)
         } else if endB {
-            type = .end_b
-        } else {
-            assertionFailure("impossible")
+            return EdgeCross(type: .end_b, point: p)
         }
         
-        return EdgeCross(type: type, point: p)
+        return nil
     }
     
     private static func crossPoint(a0: FixVec, a1: FixVec, b0: FixVec, b1: FixVec) -> FixVec {
@@ -239,14 +231,14 @@ public struct FixEdge {
         return xCondition && yCondition
     }
     
-    private static func sameLineOverlay(_ edgeA: FixEdge, _ edgeB: FixEdge) -> EdgeCross {
+    private static func sameLineOverlay(_ edgeA: FixEdge, _ edgeB: FixEdge) -> EdgeCross? {
         let a = FixBnd(edge: edgeA)
         let b = FixBnd(edge: edgeB)
 
         let isCollide = a.isCollide(b)
 
         guard isCollide else {
-            return .notCross
+            return nil
         }
 
         let isA = a.isInside(b) // b inside a
@@ -254,7 +246,7 @@ public struct FixEdge {
         
         guard !(isA && isB) else {
             // edges are equal
-            return .notCross
+            return nil
         }
         
         if isA {
@@ -296,7 +288,7 @@ public struct FixEdge {
         let hasSameEnd = edgeA.e0 == edgeB.e0 || edgeA.e0 == edgeB.e1 || edgeA.e1 == edgeB.e0 || edgeA.e1 == edgeB.e1
         
         guard !hasSameEnd else {
-            return .notCross
+            return nil
         }
         
         // penetrate
