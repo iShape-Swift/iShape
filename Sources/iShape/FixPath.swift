@@ -11,6 +11,21 @@ public typealias FixPath = [FixVec]
 
 public extension FixPath {
     
+    /// The area of the `FixPath`.
+    /// - Returns: The calculated area of the path
+    var unsafeArea: FixFloat {
+        let n = self.count
+        var p0 = self[n - 1]
+
+        var area: FixFloat = 0
+        
+        for p1 in self {
+            area += p1.unsafeCrossProduct(p0)
+            p0 = p1
+        }
+        
+        return area >> 1
+    }    
     
     /// The area of the `FixPath`.
     /// - Returns: The calculated area of the path
