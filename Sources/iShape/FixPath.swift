@@ -24,7 +24,7 @@ public extension FixPath {
             p0 = p1
         }
         
-        return area >> 1
+        return area
     }    
     
     /// The area of the `FixPath`.
