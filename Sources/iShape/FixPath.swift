@@ -29,18 +29,8 @@ public extension FixPath {
     
     /// The area of the `FixPath`.
     /// - Returns: The calculated area of the path
-    var area: FixFloat {
-        let n = self.count
-        var p0 = self[n - 1]
-
-        var area: FixFloat = 0
-        
-        for p1 in self {
-            area += p1.unsafeCrossProduct(p0)
-            p0 = p1
-        }
-        
-        return area >> (FixFloat.fractionBits + 1)
+    var fixArea: FixFloat {
+        self.unsafeArea >> (FixFloat.fractionBits + 1)
     }
 
     /// Determines if the `FixPath` is convex.
@@ -82,6 +72,14 @@ public extension FixPath {
         }
         
         return true
+    }
+    
+    /// The wind direction of the `FixPath`.
+    /// - Returns: A Boolean value indicating whether the path is clockwise ordered.
+    ///  - Returns `true` if the path is clockwise ordered.
+    ///  - Returns `false` otherwise.
+    var isClockwiseOrdered: Bool {
+        self.unsafeArea >= 0
     }
     
     

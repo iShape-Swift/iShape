@@ -14,7 +14,7 @@ public extension FixPaths {
         var maxArea: FixFloat = 0
 
         while i < count {
-            let area = self[i].area
+            let area = self[i].unsafeArea
             if abs(maxArea) < abs(area) {
                 maxArea = area
                 maxIndex = i

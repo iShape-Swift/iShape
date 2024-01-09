@@ -117,9 +117,9 @@ public struct FixBnd: Equatable {
         let cx = Swift.max(min.x, Swift.min(center.x, max.x))
         let cy = Swift.max(min.y, Swift.min(center.y, max.y))
 
-        let sqrDist = FixVec(cx, cy).sqrDistance(center)
+        let sqrDist = FixVec(cx, cy).fixSqrDistance(center)
 
-        return sqrDist <= radius.sqr
+        return sqrDist <= radius.fixSqr
     }
     
     @inline(__always)
