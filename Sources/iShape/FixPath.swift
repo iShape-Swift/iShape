@@ -20,7 +20,7 @@ public extension FixPath {
         var area: FixFloat = 0
         
         for p1 in self {
-            area += p1.unsafeCrossProduct(p0)
+            area += p1.crossProduct(p0)
             p0 = p1
         }
         
@@ -54,9 +54,9 @@ public extension FixPath {
         var sign: Int64 = 0
         for p2 in self {
             let e1 = p2 - p1
-            let cross = e1.unsafeCrossProduct(e0).signum()
+            let cross = e1.crossProduct(e0).signum()
             if cross == 0 {
-                let dot = e1.unsafeDotProduct(e0);
+                let dot = e1.dotProduct(e0);
                 if dot == -1 {
                     return false
                 }
@@ -186,7 +186,7 @@ public extension FixPath {
         
         for pi in self {
             let vi = pi - p0
-            let prod = vi.unsafeCrossProduct(v0)
+            let prod = vi.crossProduct(v0)
             if prod == 0 {
                 return true
             }
@@ -225,7 +225,7 @@ public extension FixPath {
             let p1 = self[node.index]
             let p2 = self[node.next]
 
-            if (p1 - p0).unsafeCrossProduct(p2 - p1) == 0 {
+            if (p1 - p0).crossProduct(p2 - p1) == 0 {
                 n -= 1
                 if n < 3 {
                     return []
