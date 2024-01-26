@@ -74,4 +74,23 @@ public struct FixShape {
      public mutating func addHole(_ path: FixPath) {
          self.paths.append(path.isClockwiseOrdered ? path.reversed() : path)
      }
+    
+    
+    /// Adds a new path to the shape.
+    /// Order will be not verified
+    ///
+    /// - Parameters:
+    ///   - path: The path to be added.
+    public mutating func addAsIs(_ path: FixPath) {
+        self.paths.append(path)
+    }
+    
+    /// Adds a new paths to the shape.
+    /// Order will be not verified
+    ///
+    /// - Parameters:
+    ///   - paths: The paths to be added.
+    public mutating func addAsIs(_ paths: [FixPath]) {
+        self.paths.append(contentsOf: paths)
+    }
 }
