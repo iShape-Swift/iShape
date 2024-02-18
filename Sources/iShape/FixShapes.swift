@@ -6,3 +6,9 @@
 //
 
 public typealias FixShapes = [FixShape]
+
+public extension FixShapes {
+    var pointsCount: Int {
+        self.reduce(0, { $0 + $1.pointsCount })
+    }
+}

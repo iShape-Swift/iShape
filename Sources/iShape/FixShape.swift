@@ -10,6 +10,10 @@ import iFixFloat
 /// Represents a fixed geometric shape with contour and holes.
 public struct FixShape {
     
+    public var pointsCount: Int {
+        self.paths.pointsCount
+    }
+    
     /// The array of paths defining the contour and holes of the shape.
      public var paths: [FixPath]
      
