@@ -13,7 +13,7 @@ public extension FixPath {
     
     /// The area of the `FixPath`.
     /// - Returns: The calculated area of the path
-    var unsafeArea: FixFloat {
+    @inlinable var unsafeArea: FixFloat {
         let n = self.count
         var p0 = self[n - 1]
 
@@ -29,7 +29,7 @@ public extension FixPath {
     
     /// The area of the `FixPath`.
     /// - Returns: The calculated area of the path
-    var fixArea: FixFloat {
+    @inlinable var fixArea: FixFloat {
         self.unsafeArea >> (FixFloat.fractionBits + 1)
     }
 
@@ -44,7 +44,7 @@ public extension FixPath {
     /// - Returns: A Boolean value indicating whether the path is convex.
     ///   - Returns `true` if the path is convex.
     ///   - Returns `false` otherwise.
-    var isConvex: Bool {
+    @inlinable var isConvex: Bool {
         let n = self.count
         guard n > 2 else { return true }
         
@@ -78,7 +78,7 @@ public extension FixPath {
     /// - Returns: A Boolean value indicating whether the path is clockwise ordered.
     ///  - Returns `true` if the path is clockwise ordered.
     ///  - Returns `false` otherwise.
-    var isClockwiseOrdered: Bool {
+    @inlinable var isClockwiseOrdered: Bool {
         self.unsafeArea >= 0
     }
     
@@ -86,7 +86,7 @@ public extension FixPath {
     /// Checks if a point is contained within the `FixPath`.
     /// - Parameter p: The `FixVec` point to check.
     /// - Returns: A boolean value indicating whether the point is within the path.
-    func contains(point p: FixVec) -> Bool {
+    @inlinable func contains(point p: FixVec) -> Bool {
         let n = self.count
         var isContain = false
         var b = self[n - 1]
@@ -113,7 +113,7 @@ public extension FixPath {
     /// It only works correctly with paths without duplicates.
     /// - Parameter other: The `FixPath` to compare to the current path.
     /// - Returns: A boolean value indicating whether the paths are equal.
-    func isEqualTo(_ other: [FixVec]) -> Bool {
+    @inlinable func isEqualTo(_ other: [FixVec]) -> Bool {
         let n = count
         guard n == other.count else { return false }
         
@@ -149,7 +149,7 @@ public extension FixPath {
     /// Removes any degenerate points from the `FixPath`.
     /// Degenerate points are those that are collinear with their adjacent points.
     /// After removal, the path must contain at least three non-degenerate points, or it will be cleared.
-    mutating func removeDegenerates() {
+    @inlinable mutating func removeDegenerates() {
         guard count > 2 else {
             return self.removeAll()
         }
@@ -164,7 +164,7 @@ public extension FixPath {
     /// Creates a new path by removing degenerate points from the current `FixPath`.
     /// Similar to `removeDegenerates`, but returns a new path rather than mutating the current one.
     /// - Returns: A new `FixVec` array with degenerates removed, or an empty array if there are fewer than three non-degenerate points.
-    func removedDegenerates() -> [FixVec] {
+    @inlinable func removedDegenerates() -> [FixVec] {
         guard count > 2 else {
             return []
         }
@@ -176,8 +176,7 @@ public extension FixPath {
         return self.filter()
     }
     
-    
-    private func hasDegenerates() -> Bool {
+    @inlinable internal func hasDegenerates() -> Bool {
         var p0 = self[count - 2]
         let p1 = self[count - 1]
         
@@ -197,8 +196,7 @@ public extension FixPath {
         return false
     }
     
-    
-    private func filter() -> [FixVec] {
+    @inlinable internal func filter() -> [FixVec] {
         var n = count
         
         var nodes = [Node](repeating: .init(next: .zero, index: .zero, prev: .zero), count: n)
@@ -279,12 +277,17 @@ public extension FixPath {
     }
 }
 
-private struct Node {
-    
+@usableFromInline
+internal struct Node {
+
+    @usableFromInline
     let next: Int
+    @usableFromInline
     let index: Int
+    @usableFromInline
     let prev: Int
 
+    @inlinable
     init(next: Int, index: Int, prev: Int) {
         self.next = next
         self.index = index
@@ -292,8 +295,9 @@ private struct Node {
     }
 }
 
-private extension Array where Element == Node {
+extension Array where Element == Node {
     
+    @inlinable
     mutating func remove(node: Node) {
         let prev = self[node.prev]
         let next = self[node.next]

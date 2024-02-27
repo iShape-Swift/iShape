@@ -8,6 +8,7 @@ public typealias FixPaths = [FixPath]
 
 public extension FixPaths {
 
+    @inlinable
     var pointsCount: Int {
         self.reduce(0, { $0 + $1.count })
     }

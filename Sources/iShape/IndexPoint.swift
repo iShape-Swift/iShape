@@ -14,6 +14,7 @@ public struct IndexPoint {
     public let index: Int
     public let point: FixVec
     
+    @inline(__always)
     public init(index: Int, point: FixVec) {
         self.index = index
         self.point = point

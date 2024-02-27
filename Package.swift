@@ -9,7 +9,7 @@ let package = Package(
             targets: ["iShape"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/iShape-Swift/iFixFloat", from: "1.4.0")
+        .package(url: "https://github.com/iShape-Swift/iFixFloat", from: "1.5.0")
 //         .package(path: "../iFixFloat"),  // Local path to iFixFloat
     ],
     targets: [
