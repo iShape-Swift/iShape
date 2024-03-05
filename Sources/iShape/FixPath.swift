@@ -149,7 +149,7 @@ public extension FixPath {
     /// Removes any degenerate points from the `FixPath`.
     /// Degenerate points are those that are collinear with their adjacent points.
     /// After removal, the path must contain at least three non-degenerate points, or it will be cleared.
-    @inlinable mutating func removeDegenerates() {
+    mutating func removeDegenerates() {
         guard count > 2 else {
             return self.removeAll()
         }
@@ -164,7 +164,7 @@ public extension FixPath {
     /// Creates a new path by removing degenerate points from the current `FixPath`.
     /// Similar to `removeDegenerates`, but returns a new path rather than mutating the current one.
     /// - Returns: A new `FixVec` array with degenerates removed, or an empty array if there are fewer than three non-degenerate points.
-    @inlinable func removedDegenerates() -> [FixVec] {
+    func removedDegenerates() -> [FixVec] {
         guard count > 2 else {
             return []
         }
@@ -196,31 +196,34 @@ public extension FixPath {
         return false
     }
     
-    @inlinable internal func filter() -> [FixVec] {
+    private func filter() -> [FixVec] {
         var n = count
         
-        var nodes = [Node](repeating: .init(next: .zero, index: .zero, prev: .zero), count: n)
+        var nodes = [Node](repeating: .init(next: .zero, prev: .zero), count: n)
         var validated = [Bool](repeating: false, count: n)
         var i0 = n - 2
         var i1 = n - 1
         for i2 in 0..<n {
-            nodes[i1] = Node(next: i2, index: i1, prev: i0)
+            nodes[i1] = Node(next: i2, prev: i0)
             i0 = i1
             i1 = i2
         }
 
         var first = 0
         
-        var node = nodes[first]
+        
+        var nIndex = first
+        var node = nodes[nIndex]
         var i = 0
         while i < n {
-            guard !validated[node.index] else {
+            guard !validated[nIndex] else {
+                nIndex = node.next
                 node = nodes[node.next]
                 continue
             }
             
             let p0 = self[node.prev]
-            let p1 = self[node.index]
+            let p1 = self[nIndex]
             let p2 = self[node.next]
 
             if (p1 - p0).crossProduct(p2 - p1) == 0 {
@@ -230,11 +233,12 @@ public extension FixPath {
                 }
 
                 nodes.remove(node: node)
-                if node.index == first {
+                if nIndex == first {
                     first = node.next
                 }
 
-                node = nodes[node.prev]
+                nIndex = node.prev
+                node = nodes[nIndex]
                 
                 if validated[node.prev] {
                     i -= 1
@@ -246,24 +250,24 @@ public extension FixPath {
                     validated[node.next] = false
                 }
                 
-                if validated[node.index] {
+                if validated[nIndex] {
                     i -= 1
-                    validated[node.index] = false
+                    validated[nIndex] = false
                 }
             } else {
-                validated[node.index] = true
+                validated[nIndex] = true
                 i += 1
-                node = nodes[node.next]
+                nIndex = node.next
+                node = nodes[nIndex]
             }
         }
         
-        i = 0
-        var buffer = [FixVec](repeating: .zero, count: n)
-        node = nodes[first]
-        while i < n {
-            buffer[i] = self[node.index]
-            node = nodes[node.next]
-            i += 1
+        var buffer = [FixVec]()
+        buffer.reserveCapacity(n)
+        nIndex = first
+        for _ in 0..<n {
+            buffer.append(self[nIndex])
+            nIndex = nodes[nIndex].next
         }
 
 #if DEBUG
@@ -277,32 +281,25 @@ public extension FixPath {
     }
 }
 
-@usableFromInline
-internal struct Node {
-
-    @usableFromInline
+private struct Node {
     let next: Int
-    @usableFromInline
-    let index: Int
-    @usableFromInline
     let prev: Int
 
-    @inlinable
-    init(next: Int, index: Int, prev: Int) {
+    @inline(__always)
+    init(next: Int, prev: Int) {
         self.next = next
-        self.index = index
         self.prev = prev
     }
 }
 
-extension Array where Element == Node {
+private extension Array where Element == Node {
     
-    @inlinable
+    @inline(__always)
     mutating func remove(node: Node) {
         let prev = self[node.prev]
         let next = self[node.next]
-        self[node.prev] = Node(next: node.next, index: prev.index, prev: prev.prev)
-        self[node.next] = Node(next: next.next, index: next.index, prev: node.prev)
+        self[node.prev] = Node(next: node.next, prev: prev.prev)
+        self[node.next] = Node(next: next.next, prev: node.prev)
     }
 
 }
