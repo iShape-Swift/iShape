@@ -25,3 +25,14 @@ public extension FixVec {
     }
     
 }
+
+public extension Point {
+
+    @inline(__always)
+    var cgPoint: CGPoint {
+        let x = CGFloat(self.x) / CGFloat(FixFloat.unit)
+        let y = CGFloat(self.y) / CGFloat(FixFloat.unit)
+        return CGPoint(x: x, y: y)
+    }
+    
+}
