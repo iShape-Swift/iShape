@@ -56,7 +56,7 @@ public extension FixPath {
             let e1 = p2 - p1
             let cross = e1.crossProduct(e0).signum()
             if cross == 0 {
-                let dot = e1.dotProduct(e0);
+                let dot = e1.dotProduct(e0)
                 if dot == -1 {
                     return false
                 }
@@ -293,7 +293,6 @@ private struct Node {
 }
 
 private extension Array where Element == Node {
-    
     @inline(__always)
     mutating func remove(node: Node) {
         let prev = self[node.prev]
@@ -301,5 +300,4 @@ private extension Array where Element == Node {
         self[node.prev] = Node(next: node.next, prev: prev.prev)
         self[node.next] = Node(next: next.next, prev: node.prev)
     }
-
 }
