@@ -10,6 +10,9 @@
 import CoreGraphics
 import iFixFloat
 
+public typealias CGShape = [[CGPoint]]
+public typealias CGShapes = [CGShape]
+
 public extension CGPoint {
     @inline(__always)
     var fix: FixVec {
