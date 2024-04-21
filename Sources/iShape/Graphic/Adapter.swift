@@ -166,8 +166,8 @@ public extension CGRect {
     init(rect0: CGRect, rect1: CGRect) {
         let minX = min(rect0.minX, rect1.minX)
         let minY = min(rect0.minY, rect1.minY)
-        let maxX = min(rect0.maxX, rect1.maxX)
-        let maxY = min(rect0.maxY, rect1.maxY)
+        let maxX = max(rect0.maxX, rect1.maxX)
+        let maxY = max(rect0.maxY, rect1.maxY)
         
         let width = maxX - minX
         let height = maxY - minY
