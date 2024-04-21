@@ -20,7 +20,9 @@ public extension Path {
         var area: Int64 = 0
         
         for p1 in self {
-            area += p1.crossProduct(p0)
+            area &+= Int64(p1.x) &* Int64(p0.y)
+            area &-= Int64(p1.y) &* Int64(p0.x)
+            
             p0 = p1
         }
         
