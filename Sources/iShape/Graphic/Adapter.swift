@@ -25,7 +25,7 @@ public struct PointAdapter {
         
         self.offset = CGPoint(x: ox, y: oy)
         
-        let e = Int32.bitWidth - 2 - max(a, b).exponent // 2^30 - max(a, b).exponent
+        let e = 29 - max(a, b).exponent // 2^29 - max(a, b).exponent
         
         self.dirScale = CGFloat(sign: .plus, exponent: e, significand: 1)
         self.invScale = CGFloat(sign: .plus, exponent: -e, significand: 1)
