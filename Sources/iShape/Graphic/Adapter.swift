@@ -82,17 +82,15 @@ public extension Shapes {
 
 public extension CGRect {
     
-    init(path: [CGPoint]) {
-        guard !path.isEmpty else {
-            self = CGRect.zero
-            return
+    init?(path: [CGPoint]) {
+        guard let p0 = path.first else {
+            return nil
         }
 
-        let a = CGFloat.greatestFiniteMagnitude
-        var minX = a
-        var maxX = -a
-        var minY = a
-        var maxY = -a
+        var minX = p0.x
+        var maxX = p0.x
+        var minY = p0.y
+        var maxY = p0.y
 
         for p in path {
             minX = min(minX, p.x)
@@ -107,17 +105,15 @@ public extension CGRect {
         self = CGRect(x: minX, y: minY, width: width, height: height)
     }
     
-    init(shape: CGShape) {
-        guard !shape.isEmpty else {
-            self = CGRect.zero
-            return
+    init?(shape: CGShape) {
+        guard let p0 = shape.firstPoint else {
+            return nil
         }
 
-        let a = CGFloat.greatestFiniteMagnitude
-        var minX = a
-        var maxX = -a
-        var minY = a
-        var maxY = -a
+        var minX = p0.x
+        var maxX = p0.x
+        var minY = p0.y
+        var maxY = p0.y
 
         for path in shape {
             for p in path {
@@ -134,17 +130,15 @@ public extension CGRect {
         self = CGRect(x: minX, y: minY, width: width, height: height)
     }
 
-    init(shapes: [CGShape]) {
-        guard !shapes.isEmpty else {
-            self = CGRect.zero
-            return
+    init?(shapes: [CGShape]) {
+        guard let p0 = shapes.firstPoint else {
+            return nil
         }
         
-        let a = CGFloat.greatestFiniteMagnitude
-        var minX = a
-        var maxX = -a
-        var minY = a
-        var maxY = -a
+        var minX = p0.x
+        var maxX = p0.x
+        var minY = p0.y
+        var maxY = p0.y
 
         for shape in shapes {
             for path in shape {
@@ -175,6 +169,39 @@ public extension CGRect {
         self = CGRect(x: minX, y: minY, width: width, height: height)
     }
     
+    init?(rect0: CGRect?, rect1: CGRect?) {
+        let unionRect: CGRect
+        if let rect0 = rect0, let rect1 = rect1 {
+            self = CGRect(rect0: rect0, rect1: rect1)
+        } else if let rect = rect0 {
+            self = rect
+        } else if let rect = rect1 {
+            self = rect
+        } else {
+            return nil
+        }
+    }
 }
 
+private extension CGShape {
+    var firstPoint: CGPoint? {
+        for path in self {
+            if let p = path.first {
+                return p
+            }
+        }
+        return nil
+    }
+}
+
+private extension CGShapes {
+    var firstPoint: CGPoint? {
+        for shape in self {
+            if let p = shape.firstPoint {
+                return p
+            }
+        }
+        return nil
+    }
+}
 #endif
